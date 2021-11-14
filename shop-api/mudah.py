@@ -11,7 +11,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 
 
-# browser session options
+#### browser session options
 chromeOptions = webdriver.ChromeOptions()
 chromeOptions.add_argument("--no-sandbox")
 chromeOptions.add_argument("--headless")
@@ -85,6 +85,7 @@ if len(clear_unfinished_ad) > 0:
 input_category = driver.find_element(By.XPATH, "//input[@name='category']")
 #input_category.select_by_value("Jobs")
 print("Input category={0}".format(input_category.get_attribute("value")))
+
 
 
 
