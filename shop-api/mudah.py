@@ -66,7 +66,7 @@ print("Login success greeting={0}".format(span_greet.text))
 #### show active ads
 print("SHOW ACTIVE ADS:")
 div_livead = driver.find_element(By.XPATH, "//div[@class='live_ad_box']")
-print("Live advertisements count={0}".format(div_livead.text))
+print("Live ads count={0}".format(div_livead.text))
 
 
 
@@ -76,15 +76,32 @@ print("LIST ONE ITEM:")
 btn_newpost = driver.find_element(By.XPATH, "//a[contains(@href,'mudah.my/ai')]")
 btn_newpost.click()
 
-clear_unfinished_ad = driver.find_elements(By.XPATH, "//button[contains(text(),'START NEW ADS')]")
+clear_unfinished_ad = driver.find_elements(By.XPATH, "//button[contains(text(),'START NEW AD')]")
 
 # clear previous unfinished ad
 if len(clear_unfinished_ad) > 0:
+    print("clear unfinished ad")
     clear_unfinished_ad.click()
+else:
+    print("skip clear ad")
 
-input_category = driver.find_element(By.XPATH, "//input[@name='category']")
-#input_category.select_by_value("Jobs")
-print("Input category={0}".format(input_category.get_attribute("value")))
+btn_clear = driver.find_element(By.XPATH, "//button[contains(text(),'CLEAR ALL')]")
+ActionChains(driver).move_to_element(btn_clear).click().perform()
+
+div_category = driver.find_element(By.XPATH, "//div[@id='category-form-field']")
+ActionChains(driver).move_to_element(div_category).click().perform()
+
+option_car = driver.find_element(By.XPATH, "//div[@role='option']/span[contains(text(),'Land')]/../..")
+ActionChains(driver).move_to_element(option_car).click().perform()
+
+btn_confirm = driver.find_elements(By.XPATH, "//button[contains(text(),'YES, LET ME CHANGE IT')]")
+
+if len(btn_confirm) > 0:
+    print("confirm change select option")
+    btn_confirm.click()
+
+input_category = driver.find_element(By.XPATH, "//input[@id='category']")
+print("Input category={0}".format(input_category.get_attribute('value')))
 
 
 
