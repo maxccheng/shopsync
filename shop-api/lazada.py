@@ -50,7 +50,6 @@ input_password.send_keys(str_password)
 print("Login password={0}".format(input_password.get_attribute('value')))
 
 btn_login = driver.find_element(By.XPATH, "//span[text()='Login']/..")
-sometext = btn_login.find_element(By.XPATH, "./span")
 ActionChains(driver).move_to_element(btn_login).click().perform()
 
 profile = driver.find_element(By.XPATH, "//div[contains(@class,'asc-profile-info')]/a")
