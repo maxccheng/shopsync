@@ -54,9 +54,8 @@ print("Login success shop name={0}".format(profile.get_attribute('innerHTML')))
 
 
 #### list products
+print("LIST PRODUCT:")
 driver.get("https://sellercenter.lazada.com.my/product/portal/index")
-#manage_product = driver.find_element(By.XPATH, "//a[@title='Manage Products']")
-#ActionChains(driver).move_to_element(manage_product).click().perform()
 
 
 product_name = driver.find_elements(By.XPATH, "//a[@class='product-desc-span-link']")
@@ -65,7 +64,9 @@ for p in product_name:
 
 
 
+
 #### logout
+print("LOGOUT:")
 profile_icon = driver.find_element(By.XPATH, "//div[contains(@class,'profile-icon')]/img")
 ActionChains(driver).move_to_element(profile_icon).click().perform()
 
