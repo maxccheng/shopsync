@@ -8,8 +8,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support import expected_conditions as EC
 
-#from fake_useragent import UserAgent
-
 
 
 
@@ -20,11 +18,7 @@ chromeOptions.add_argument("--headless")
 chromeOptions.add_argument("--disable-blink-features")
 chromeOptions.add_argument("--disable-blink-features=AutomationControlled")
 chromeOptions.add_argument("--window-size=1920,1080")
-#uagent = UserAgent()
-#userAgent = uagent.random
-#print(userAgent)
-#chromeOptions.add_argument(f'user_agent={userAgent}')
-timeout = 2
+timeout = 5
 
 driver = Chrome(options=chromeOptions)
 driver.implicitly_wait(timeout)
@@ -53,12 +47,21 @@ btn_login = driver.find_element(By.XPATH, "//span[text()='Login']/..")
 ActionChains(driver).move_to_element(btn_login).click().perform()
 
 profile = driver.find_element(By.XPATH, "//div[contains(@class,'asc-profile-info')]/a")
+shopname = profile.text
 print("Login success shop name={0}".format(profile.get_attribute('innerHTML')))
 
 
 
 
 #### logout
+profile_icon = driver.find_element(By.XPATH, "//div[contains(@class,'profile-icon')]/img")
+ActionChains(driver).move_to_element(profile_icon).click().perform()
+
+logout_icon = driver.find_element(By.XPATH, "//div[contains(@class,'log-out')]")
+ActionChains(driver).move_to_element(logout_icon).click().perform()
+
+input_user = driver.find_element(By.XPATH, "//input[@id='account']")
+print("Logout ok.")
 
 driver.close()
 
