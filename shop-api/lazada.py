@@ -47,7 +47,7 @@ btn_login = driver.find_element(By.XPATH, "//span[text()='Login']/..")
 ActionChains(driver).move_to_element(btn_login).click().perform()
 
 profile = driver.find_element(By.XPATH, "//div[contains(@class,'asc-profile-info')]/a")
-shopname = profile.text
+shopname = profile.text # not sure why this is needed
 print("Login success shop name={0}".format(profile.get_attribute('innerHTML')))
 
 
