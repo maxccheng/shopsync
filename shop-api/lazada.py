@@ -5,8 +5,9 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support import expected_conditions as EC
+
+import helper
 
 
 
@@ -18,10 +19,9 @@ chromeOptions.add_argument("--headless")
 chromeOptions.add_argument("--disable-blink-features")
 chromeOptions.add_argument("--disable-blink-features=AutomationControlled")
 chromeOptions.add_argument("--window-size=1920,1080")
-timeout = 2
 
 driver = Chrome(options=chromeOptions)
-driver.implicitly_wait(timeout)
+helper.set_driver(driver)
 driver.get("https://sellercenter.lazada.com.my")
 
 
@@ -33,7 +33,7 @@ print("SIGN IN:")
 str_user ="+60174799829"
 str_password ="popo1234"
 
-input_user = driver.find_element(By.XPATH, "//input[@id='account']")
+input_user = helper.find_element("//input[@id='account']")
 input_user.clear()
 input_user.send_keys(str_user)
 print("Login user={0}".format(input_user.get_attribute('value')))
@@ -43,11 +43,9 @@ input_password.clear()
 input_password.send_keys(str_password)
 print("Login password={0}".format(input_password.get_attribute('value')))
 
-btn_login = driver.find_element(By.XPATH, "//span[text()='Login']/..")
-ActionChains(driver).move_to_element(btn_login).click().perform()
+btn_login = helper.click_element("//span[text()='Login']/..")
 
-wait = WebDriverWait(driver, 6, ignored_exceptions=[])
-profile = wait.until(EC.visibility_of_element_located((By.XPATH, "//div[contains(@class,'asc-profile-info')]/a")))
+profile = helper.find_element("//div[contains(@class,'asc-profile-info')]/a")
 shopname = profile.text # not sure why this is needed
 print("Login success shop name={0}".format(profile.get_attribute('innerHTML')))
 
@@ -68,15 +66,14 @@ for p in product_name:
 
 #### logout
 print("LOGOUT:")
-profile_icon = driver.find_element(By.XPATH, "//div[contains(@class,'profile-icon')]/img")
-ActionChains(driver).move_to_element(profile_icon).click().perform()
+profile_icon = helper.click_element("//div[contains(@class,'profile-icon')]/img")
+#logout_icon = driver.find_element(By.XPATH, "//div[contains(@class,'log-out')]")
+#ActionChains(driver).move_to_element(logout_icon).click().perform()
 
-logout_icon = driver.find_element(By.XPATH, "//div[contains(@class,'log-out')]")
-ActionChains(driver).move_to_element(logout_icon).click().perform()
+logout_icon = helper.click_element("//div[contains(@class,'log-out')]")
 
-wait = WebDriverWait(driver, 6, ignored_exceptions=[])
-input_user = wait.until(EC.visibility_of_element_located((By.XPATH, "//input[@id='account']")))
-print("Logout ok.")
+input_user = helper.find_element("//input[@id='account']")
+print("Logout ok")
 
-driver.close()
+driver.quit()
 

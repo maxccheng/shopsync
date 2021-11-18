@@ -117,5 +117,5 @@ hover_click.perform()
 
 print("Logout ok.url={0}".format(driver.current_url))
 
-driver.close()
+driver.quit()
 
