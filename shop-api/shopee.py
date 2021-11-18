@@ -20,7 +20,7 @@ chromeOptions.add_argument("--window-size=1920,1080")
 chromeOptions.add_argument("start-maximized")
 chromeOptions.add_argument("disable-infobars")
 chromeOptions.add_argument("disable-notifications")
-timeout = 5
+timeout = 2
 
 driver = Chrome(options=chromeOptions)
 driver.implicitly_wait(timeout)
@@ -35,7 +35,8 @@ print("SIGN IN:")
 str_user ="+60174799829"
 str_password ="Popo1234"
 
-input_user = driver.find_element(By.XPATH, "//label[@for='username']/..//input")
+wait = WebDriverWait(driver, 6, ignored_exceptions=[])
+input_user = wait.until(EC.visibility_of_element_located((By.XPATH, "//label[@for='username']/..//input")))
 input_user.clear()
 input_user.send_keys(str_user)
 print("Login user={0}".format(input_user.get_attribute('value')))
@@ -48,7 +49,7 @@ print("Login password={0}".format(input_password.get_attribute('value')))
 btn_login = driver.find_element(By.XPATH, "//span[contains(text(),'Log In')]/..")
 ActionChains(driver).move_to_element(btn_login).click().perform()
 
-wait = WebDriverWait(driver, 5, ignored_exceptions=[StaleElementReferenceException])
+wait = WebDriverWait(driver, 6, ignored_exceptions=[StaleElementReferenceException])
 accname = wait.until(EC.visibility_of_element_located((By.XPATH, "//span[@class='account-name']")))
 accname_str = accname.text
 print("Login success acc name={0}".format(accname_str))
@@ -70,7 +71,8 @@ print("LIST PRODUCT:")
 
 #### logout
 print("LOGOUT:")
-acc_dropdown = driver.find_element(By.XPATH, "//span[@class='account-name']")
+wait = WebDriverWait(driver, 6, ignored_exceptions=[])
+acc_dropdown = wait.until(EC.visibility_of_element_located((By.XPATH, "//span[@class='account-name']")))
 ActionChains(driver).move_to_element(acc_dropdown).click().perform()
 
 span_logout = driver.find_element(By.XPATH, "//span[text()='Logout']")

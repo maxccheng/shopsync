@@ -112,9 +112,7 @@ driver.get("https://www2.mudah.my/useraccount.html")
 btn_dropdown = driver.find_element(By.XPATH, "//li[contains(@class,'dropdown')]")
 btn_logout = driver.find_element(By.XPATH, "//a[contains(@href,'logout=1')]")
 
-hover_click = ActionChains(driver) \
-                .move_to_element(btn_dropdown) \
-                .click(btn_logout)
+hover_click = ActionChains(driver).move_to_element(btn_dropdown).click(btn_logout)
 hover_click.perform()
 
 print("Logout ok.url={0}".format(driver.current_url))
