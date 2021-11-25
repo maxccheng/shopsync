@@ -78,7 +78,6 @@ href_product = helper.find_element("//a[@class='product-name-wrap']")
 driver.get(href_product.get_attribute("href"))
 
 details_title = helper.find_element("//a[text()='Product Details']")
-fields = helper.find_elements("//div[contains(@class,'edit-label')]/following-sibling::div[1]")
 
 
 # download file functions
@@ -136,9 +135,27 @@ print("local_video={0}".format(local_video))
 
 
 # text fields
-print("fields count={0}".format(len(fields)))
-for f in fields:
-    print("fields val = {0}".format(f.text))
+text_label = helper.find_elements("//div[@class='grid edit-row']//div[@class='edit-label edit-title']")
+text_select = helper.find_elements("//div[@class='grid edit-row']//div[@class='edit-input edit-text']")
+text_input = [helper.find_element("//div[@class='product-basic-info']//div[contains(@class,'edit-row')]//div[contains(@class,'edit-input')]//input")]
+text_area = helper.find_element("//div[@class='product-basic-info']//div[contains(@class,'description-wrap')]//textarea")
+text_category = helper.find_element("//div[contains(@class,'category-name')]")
+
+print("text_label count={0}".format(len(text_label)))
+print("text_select count={0}".format(len(text_select)))
+print("text_input count={0}".format(len(text_input)))
+
+for i, x in enumerate(text_label):
+    print("label {0}={1}".format(i, x.text.replace("\n"," ")))
+
+for i, x in enumerate(text_select):
+    print("select text {0}={1}".format(i, x.text.replace("\n"," ")))
+
+for i, x in enumerate(text_input):
+    print("input text {0}={1}".format(i, x.get_property('value').replace("\n"," ")))
+
+print("text area {0}".format(text_area.get_property('value').replace("\n"," ")))
+print("text category {0}".format(text_category.text.replace("\n"," ")))
 
 
 
