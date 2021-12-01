@@ -143,7 +143,6 @@ while attempt < MAX_ATTEMPT:
         text_label = helper.find_elements("//div[@class='grid edit-row']//div[@class='edit-label edit-title']")
         text_select = helper.find_elements("//div[@class='grid edit-row']//div[@class='edit-input edit-text']")
         text_input = helper.find_elements_presence("//div[contains(@class,'edit-row')]//div[contains(@class,'edit-input')]//input[@type='text']")
-        #text_input = [helper.find_element("//div[@class='product-basic-info']//div[contains(@class,'edit-row')]//div[contains(@class,'edit-input')]//input")]
         text_area = helper.find_element("//div[@class='product-basic-info']//div[contains(@class,'description-wrap')]//textarea")
         text_category = helper.find_element("//div[contains(@class,'category-name')]")
         text_radio = helper.find_elements_presence("//input[@class='shopee-radio__input']")
@@ -184,12 +183,8 @@ while attempt < MAX_ATTEMPT:
         #### add one product
         print("ADD PRODUCT:")
 
-        json_product = \
-            '[' \
-            '{"name": "Google Home for Smart House", "category": "Home Appliances > Small Household Appliances > Others"},' \
-            '{"name": "CR2032 small coin cell battery", "category": "Home Appliances > Battery"}' \
-            ']'
-
+        file_product = open("test_products.json", "r")
+        json_product = file_product.read()
         products = json.loads(json_product)
 
         for p in products:
