@@ -8,6 +8,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import StaleElementReferenceException, NoAlertPresentException
 
+import os
 import json
 import urllib.request # python3 std lib
 import urllib.error
@@ -56,7 +57,7 @@ while attempt < MAX_ATTEMPT:
         input_password.send_keys(str_password)
         print("Login password={0}".format(input_password.get_attribute('value')))
 
-        btn_login = helper.click_element("//span[contains(text(),'Log In')]/..")
+        btn_login = helper.click_element("//span[normalize-space()='Log In']/..")
 
         accname = helper.find_element("//span[@class='account-name']", ignored_exceptions=[StaleElementReferenceException])
         accname_str = accname.text
@@ -188,6 +189,8 @@ while attempt < MAX_ATTEMPT:
         products = json.loads(json_product)
 
         for p in products:
+            print("p.name={0} p.category={1}".format(p['name'], p['category']))
+
             driver.get("https://seller.shopee.com.my/portal/product/category")
 
             try:
@@ -197,9 +200,43 @@ while attempt < MAX_ATTEMPT:
 
             product_name = helper.find_element("//div[@class='product-name-edit']//input")
             product_name.clear()
-            print("p.name={0} p.category={1}".format(p['name'], p['category']))
             product_name.send_keys(p['name'])
 
+            # category
+            cat_full = p['category']
+            cat_split = cat_full.split(" > ")
+
+            for i,x in enumerate(cat_split):
+                xpath = "//div[@class='category-list']/ul[" + str(i+1) + "]//p[normalize-space()='" + x + "']/.."
+                cat_list = helper.click_element(xpath)
+                next_status = helper.find_element("//span[normalize-space()='Next']/..").get_attribute("disabled")
+                if next_status == None:
+                    print("next button status {0}={1}".format(i, next_status))
+                    next_btn = helper.click_element("//span[normalize-space()='Next']/..")
+                    break
+
+            # upload image
+            if 'image' in p:
+                print("product image found")
+                image_all = p['image']
+                for i,x in enumerate(image_all):
+                    image_input = helper.find_element_presence("//div[contains(@class,'shopee-image-manager')]/div/div[" + str(i+1) + "]//input[@type='file']")
+                    image_input.send_keys(os.path.abspath(x))
+                    verify_upload = helper.find_element("//div[contains(@class,'shopee-image-manager')]/div/div[" + str(i+1) + "]//div[@class='shopee-image-manager__image']")
+                    print("verify upload thumbnail={0}".format(verify_upload.get_attribute('style')))
+
+            # description
+            descrip = p['description']
+            #desc_text = helper.find_element_presence("//textarea[contains(@class,'shopee-input__inner--normal')]")
+            #desc_text.send_keys(descrip)
+
+            # dangerous goods
+            danger = p['dangerous_good']
+            xpath = "//div[contains(@class,'dangerous-goods-row')]//span[normalize-space()='" + danger + "']//ancestor::label[@class='shopee-radio']"
+            print("xpath {0}".format(xpath))
+            danger_radio = helper.click_element("//div[contains(@class,'dangerous-goods-row')]//span[normalize-space()='" + danger + "']//ancestor::label[@class='shopee-radio']")
+            danger_radio = helper.find_element_presence("//div[contains(@class,'dangerous-goods-row')]//span[normalize-space()='" + danger + "']//ancestor::label[@class='shopee-radio']/input")
+            print("danger_radio json={0} checked={1}".format(danger, danger_radio.get_attribute('checked')))
 
 
 
