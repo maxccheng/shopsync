@@ -6,7 +6,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import StaleElementReferenceException, NoAlertPresentException
+from selenium.common.exceptions import StaleElementReferenceException, NoAlertPresentException, TimeoutException
 
 import os
 import json
@@ -227,17 +227,31 @@ while attempt < MAX_ATTEMPT:
 
             # description
             descrip = p['description']
-            #desc_text = helper.find_element_presence("//textarea[contains(@class,'shopee-input__inner--normal')]")
-            #desc_text.send_keys(descrip)
+            desc_text = helper.find_element_presence("//div[contains(@class,'description')]//textarea")
+            desc_text.send_keys(descrip)
 
             # dangerous goods
             danger = p['dangerous_good']
-            xpath = "//div[contains(@class,'dangerous-goods-row')]//span[normalize-space()='" + danger + "']//ancestor::label[@class='shopee-radio']"
-            print("xpath {0}".format(xpath))
-            danger_radio = helper.click_element("//div[contains(@class,'dangerous-goods-row')]//span[normalize-space()='" + danger + "']//ancestor::label[@class='shopee-radio']")
+            helper.click_element("//div[contains(@class,'dangerous-goods-row')]//span[normalize-space()='" + danger + "']//ancestor::label[@class='shopee-radio']")
             danger_radio = helper.find_element_presence("//div[contains(@class,'dangerous-goods-row')]//span[normalize-space()='" + danger + "']//ancestor::label[@class='shopee-radio']/input")
             print("danger_radio json={0} checked={1}".format(danger, danger_radio.get_attribute('checked')))
 
+            # fill section - specification
+            try:
+                show_more = helper.find_element_presence("//span[normalize-space()='Show more']/..")
+                print("Clicked show more")
+                helper.click_element("//span[normalize-space()='Show more']/..")
+            except TimeoutException as e:
+                pass
+
+            brand = p['brand']
+            brand_dropdown = helper.find_element("//div[@class='item-title']//text()[normalize-space()='Brand']//ancestor::div[contains(@class,'edit-row')]//div[contains(@class,'shopee-selector')]")
+            driver.execute_script("arguments[0].click();", brand_dropdown)
+            brand_filter = helper.find_element("(//body/div[contains(@class,'shopee-popper')])[last()]//ul[@class='shopee-dropdown-menu']//input", 10)
+            brand_filter.send_keys(brand)
+            brand_option = helper.click_element("//ul[@class='shopee-dropdown-menu']//div[@class='shopee-option' and normalize-space()='" + brand + "']")
+            brand_verify = helper.find_element_presence("//div[@class='item-title']//text()[normalize-space()='Brand']//ancestor::div[contains(@class,'edit-row')]//div[@class='shopee-select']")
+            print("Brand={0}".format(brand_verify.text))
 
 
         #### logout
