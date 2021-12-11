@@ -13,6 +13,7 @@ import json
 import urllib.request # python3 std lib
 import urllib.error
 import traceback
+import socket
 
 # custom library
 import helper
@@ -28,6 +29,9 @@ chromeOptions.add_argument("--window-size=1920,1080")
 chromeOptions.add_argument("start-maximized")
 chromeOptions.add_argument("disable-infobars")
 chromeOptions.add_argument("--disable-notifications")
+
+# for urlretrieve() timeout
+socket.setdefaulttimeout(12)
 
 MAX_ATTEMPT = 2
 attempt = 0
@@ -194,12 +198,13 @@ while attempt < MAX_ATTEMPT:
             driver.get("https://seller.shopee.com.my/portal/product/category")
 
             try:
+                wait = WebDriverWait(driver, 2)
+                wait.until(EC.alert_is_present())
                 driver.switch_to.alert.accept()
-            except NoAlertPresentException:
-                print("no unsaved changes alert")
+            except (TimeoutException, NoAlertPresentException):
+                print("no browser alert msgbox")
 
             product_name = helper.find_element("//div[@class='product-name-edit']//input")
-            product_name.clear()
             product_name.send_keys(p['name'])
 
             # category
@@ -222,7 +227,7 @@ while attempt < MAX_ATTEMPT:
                 for i,x in enumerate(image_all):
                     image_input = helper.find_element_presence("//div[contains(@class,'shopee-image-manager')]/div/div[" + str(i+1) + "]//input[@type='file']")
                     image_input.send_keys(os.path.abspath(x))
-                    verify_upload = helper.find_element("//div[contains(@class,'shopee-image-manager')]/div/div[" + str(i+1) + "]//div[@class='shopee-image-manager__image']")
+                    verify_upload = helper.find_element("//div[contains(@class,'shopee-image-manager')]/div/div[" + str(i+1) + "]//div[@class='shopee-image-manager__image']", 12)
                     print("verify upload thumbnail={0}".format(verify_upload.get_attribute('style')))
 
             # description
@@ -247,11 +252,45 @@ while attempt < MAX_ATTEMPT:
             brand = p['brand']
             brand_dropdown = helper.find_element("//div[@class='item-title']//text()[normalize-space()='Brand']//ancestor::div[contains(@class,'edit-row')]//div[contains(@class,'shopee-selector')]")
             driver.execute_script("arguments[0].click();", brand_dropdown)
-            brand_filter = helper.find_element("(//body/div[contains(@class,'shopee-popper')])[last()]//ul[@class='shopee-dropdown-menu']//input", 10)
+            brand_filter = helper.find_element("(//body/div[contains(@class,'shopee-popper')])[last()]//ul[@class='shopee-dropdown-menu']//input")
             brand_filter.send_keys(brand)
             brand_option = helper.click_element("//ul[@class='shopee-dropdown-menu']//div[@class='shopee-option' and normalize-space()='" + brand + "']")
             brand_verify = helper.find_element_presence("//div[@class='item-title']//text()[normalize-space()='Brand']//ancestor::div[contains(@class,'edit-row')]//div[@class='shopee-select']")
             print("Brand={0}".format(brand_verify.text))
+
+            # fill section - sales information
+            price = p['price']
+            price_input = helper.find_element("//span[normalize-space()='Price']//ancestor::div[@class='grid edit-row']//input")
+            price_input.send_keys(price)
+
+            stock = p['stock']
+            stock_input = helper.find_element("//span[normalize-space()='Stock']//ancestor::div[@class='grid edit-row']//input")
+            stock_input.send_keys(stock)
+
+            # fill section - shipping
+            weight = p['weight']
+            weight_input = helper.find_element("//h2[normalize-space()='Shipping']/..//text()[normalize-space()='Weight']//ancestor::div[@class='grid edit-row']//input")
+            weight_input.send_keys(weight)
+
+            parcel_size_w = p['parcel_size_w']
+            parcel_size_l = p['parcel_size_l']
+            parcel_size_h = p['parcel_size_h']
+            dimension_edit = helper.find_element("//div[@class='product-dimension-edit']/div[1]//input")
+            dimension_edit.send_keys(parcel_size_w)
+            dimension_edit = helper.find_element("//div[@class='product-dimension-edit']/div[2]//input")
+            dimension_edit.send_keys(parcel_size_l)
+            dimension_edit = helper.find_element("//div[@class='product-dimension-edit']/div[3]//input")
+            dimension_edit.send_keys(parcel_size_h)
+
+            shipping = p['shipping_option']
+            # skip this for now
+
+            # Save and delist
+            save_delist = helper.click_element("//span[normalize-space()='Save and Delist']/..")
+            inserted_product = helper.find_element_presence("//span[normalize-space()='" + p['name'] + "']")
+            print("Save and delist {0}".format(inserted_product.text))
+
+
 
 
         #### logout
