@@ -30,27 +30,27 @@ def set_driver(d):
     driver = d
 
 
-def find_element(xpath, explicit_timeout=6, poll_frequency=1.0, ignored_exceptions=[]):
+def find_element(xpath, explicit_timeout=6, poll_frequency=2, ignored_exceptions=[]):
     wait = WebDriverWait(driver, explicit_timeout, poll_frequency=poll_frequency, ignored_exceptions=ignored_exceptions)
     elem = wait.until(EC.visibility_of_element_located((By.XPATH, xpath)))
     return elem
 
-def find_element_presence(xpath, explicit_timeout=6, poll_frequency=1.0, ignored_exceptions=[]):
+def find_element_presence(xpath, explicit_timeout=6, poll_frequency=2, ignored_exceptions=[]):
     wait = WebDriverWait(driver, explicit_timeout, poll_frequency=poll_frequency, ignored_exceptions=ignored_exceptions)
     elem = wait.until(EC.presence_of_element_located((By.XPATH, xpath)))
     return elem
 
-def find_elements(xpath, explicit_timeout=6, poll_frequency=1.0, ignored_exceptions=[]):
+def find_elements(xpath, explicit_timeout=6, poll_frequency=2, ignored_exceptions=[]):
     wait = WebDriverWait(driver, explicit_timeout, poll_frequency=poll_frequency, ignored_exceptions=ignored_exceptions)
     elem = wait.until(EC.visibility_of_all_elements_located((By.XPATH, xpath)))
     return elem
 
-def find_elements_presence(xpath, explicit_timeout=6, poll_frequency=1.0, ignored_exceptions=[]):
+def find_elements_presence(xpath, explicit_timeout=6, poll_frequency=2, ignored_exceptions=[]):
     wait = WebDriverWait(driver, explicit_timeout, poll_frequency=poll_frequency, ignored_exceptions=ignored_exceptions)
     elem = wait.until(EC.presence_of_all_elements_located((By.XPATH, xpath)))
     return elem
 
-def click_element(xpath, explicit_timeout=6, poll_frequency=1.0, ignored_exceptions=[]):
+def click_element(xpath, explicit_timeout=10, poll_frequency=2, ignored_exceptions=[]):
     wait = WebDriverWait(driver, explicit_timeout, poll_frequency=poll_frequency, ignored_exceptions=ignored_exceptions)
     elem = wait.until(EC.presence_of_element_located((By.XPATH, xpath)))
     ActionChains(driver).move_to_element(elem).click().perform()

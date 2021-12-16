@@ -22,6 +22,8 @@ import helper
 
 
 
+starttime = time.time()
+
 #### browser session options
 chromeOptions = webdriver.ChromeOptions()
 chromeOptions.add_argument("--no-sandbox")
@@ -95,22 +97,64 @@ while attempt < MAX_ATTEMPT:
             driver.get("https://sellercenter.lazada.com.my/product/publish/index")
             time.sleep(1)
 
+            # fill product name
             f_name = p['name']
             product_name = helper.find_element("//text()[normalize-space()='Product Name']//ancestor::div[contains(@class,'next-form-item')]//input")
             product_name.send_keys(f_name)
 
+            # fill product category
             cat_full = p['category']
             cat_split = cat_full.split(" > ")
 
             cat_input = helper.click_element("//input[@id='category-input']")
             for i,x in enumerate(cat_split):
-                xpath = "(//div[@class='category-list'])[" + str(i+1) + "]//p[normalize-space()='" + x + "']/.."
+                xpath = "(//ul[@class='list-wrap'])[" + str(i+1) + "]/li[@title='" + x + "']"
                 cat_list = helper.click_element(xpath)
-                next_status = helper.find_element("//button[normalize-space()='Confirm']").get_attribute("disabled")
+                next_status = helper.find_element("//button[text()='Confirm']").get_attribute("disabled")
                 if next_status == None:
                     print("next button status {0}={1}".format(i, next_status))
-                    next_btn = helper.click_element("//button[normalize-space()='Confirm']")
+                    next_btn = helper.click_element("//button[text()='Confirm']")
                     break
+
+            time.sleep(3)
+
+            # fill section - specification
+            f_brand = p['brand']
+            product_brand = helper.click_element("//h2[text()='Specification']/..//span[text()='Brand']/../../../../..//input")
+            product_brand.send_keys(f_brand)
+            helper.click_element("//li[@title='" + f_brand + "']")
+            product_brand = helper.find_element("//h2[text()='Specification']/..//span[text()='Brand']/../../../../..//span[contains(@class,'next-input-text-field')]")
+            print("Brand={0}".format(product_brand.text))
+
+            # fill section - variants
+            f_price = p['price']
+            product_price = helper.find_element("//input[@placeholder='Price']")
+            product_price.send_keys(f_price)
+
+            f_stock = p['stock']
+            product_stock = helper.find_element("//input[@placeholder='quantity']")
+            product_stock.send_keys(f_stock)
+
+            helper.click_element("//h2[text()='Variants']/..//button[text()='Apply To All']")
+
+            # fill section - delivery & warranty
+            weight = p['weight']
+            weight_input = helper.find_element("//input[@group='package' and @uitype='PackageWeight']")
+            weight_input.send_keys(weight)
+
+            parcel_size_w = p['parcel_size_w']
+            parcel_size_l = p['parcel_size_l']
+            parcel_size_h = p['parcel_size_h']
+            dimension_edit = helper.find_element("//input[@group='package' and @placeholder='Width (cm)']")
+            dimension_edit.send_keys(parcel_size_w)
+            dimension_edit = helper.find_element("//input[@group='package' and @placeholder='Length (cm)']")
+            dimension_edit.send_keys(parcel_size_l)
+            dimension_edit = helper.find_element("//input[@group='package' and @placeholder='Height (cm)']")
+            dimension_edit.send_keys(parcel_size_h)
+
+            # Save draft
+            save_product = helper.click_element("//button[text()='Save Draft']")
+            print("Save draft {0}".format(p['name']))
 
 
 
@@ -118,11 +162,11 @@ while attempt < MAX_ATTEMPT:
         #### logout
         print("LOGOUT:")
         driver.get("https://sellercenter.lazada.com.my")
-        profile_icon = helper.click_element("//div[contains(@class,'profile-icon')]/img")
-        logout_icon = helper.click_element("//div[contains(@class,'log-out')]")
+        profile_icon = helper.click_element("//div[@class='right-sidebar']//div[contains(@class,'profile-icon')]/img")
+        logout_icon = helper.click_element("//div[@class='profile-portals']//div[contains(@class,'log-out')]")
 
-        input_user = helper.find_element("//input[@id='account']")
         print("Logout ok")
+        driver.quit()
 
     except Exception as e:
         print("Global exception #{0}/{1}:".format(attempt+1, MAX_ATTEMPT))
@@ -133,3 +177,5 @@ while attempt < MAX_ATTEMPT:
 
     break
 
+elapsed = time.time() - starttime
+print("elapsed {0:.0f} secs".format(elapsed))

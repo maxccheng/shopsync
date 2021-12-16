@@ -9,6 +9,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import StaleElementReferenceException, NoAlertPresentException, TimeoutException
 
 import os
+import time
 import json
 import urllib.request # python3 std lib
 import urllib.error
@@ -20,6 +21,8 @@ import helper
 
 
 
+
+starttime = time.time()
 
 #### browser session options
 chromeOptions = webdriver.ChromeOptions()
@@ -320,3 +323,5 @@ while attempt < MAX_ATTEMPT:
 
     break
 
+elapsed = time.time() - starttime
+print("elapsed {0:.0f} secs".format(elapsed))
