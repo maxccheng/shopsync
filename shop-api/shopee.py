@@ -188,9 +188,10 @@ while attempt < MAX_ATTEMPT:
         #### add one product
         print("ADD PRODUCT:")
 
-        file_product = open("test_products.json", "r")
+        file_product = open("test_product_shopee.json", "r")
         json_product = file_product.read()
         products = json.loads(json_product)
+        file_product.close()
 
         for p in products:
             print("p.name={0} p.category={1}".format(p['name'], p['category']))
@@ -295,16 +296,16 @@ while attempt < MAX_ATTEMPT:
 
         #### logout
         print("LOGOUT:")
-        acc_dropdown = helper.click_element("//span[@class='account-name']")
-        span_logout = helper.click_element("//span[text()='Logout']")
-
-        wait = WebDriverWait(driver, 5).until(EC.alert_is_present())
+        driver.get("https://seller.shopee.com.my")
 
         try:
+            wait = WebDriverWait(driver, 5).until(EC.alert_is_present())
             driver.switch_to.alert.accept()
-        except NoAlertPresentException:
+        except (TimeoutException, NoAlertPresentException):
             print("no unsaved changes alert")
 
+        acc_dropdown = helper.click_element("//span[@class='account-name']")
+        span_logout = helper.click_element("//span[text()='Logout']")
         input_user = helper.find_element("//label[@for='username']/..//input")
 
         print("Logout ok.")
