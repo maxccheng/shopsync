@@ -1,7 +1,7 @@
 [
     {
     "name": "Google Home for Smart House",
-    "category": "Home Appliances > Small Household Appliances > Others",
+    "category": "Smart Devices > Smart Speakers",
     "brand": "Google",
     "image": ["./Google-Home-Hero.jpg", "./google-home-featured.png"],
     "description": "Google Nest, previously named Google Home, is a line of smart speakers developed by Google under the Google Nest brand. The devices enable users to speak voice commands to interact with services through Google Assistant, the company's virtual assistant. Both in-house and third-party services are integrated, allowing users to listen to music, control playback of videos or photos, or receive news updates entirely by voice. Google Nest devices also have integrated support for home automation, letting users control smart home appliances with their voice command.",
@@ -16,7 +16,7 @@
     },
     {
     "name": "Google Mini Smart Speaker",
-    "category": "Computers & Accessories > Desktop Computers > Mini PC",
+    "category": "Groceries > Fruit & Vegetables > Fresh Vegetables > Carrots & Root Vegetables > Carrots",
     "brand": "Google",
     "image": ["./Google-Home-Hero.jpg"],
     "description": "The devices enable users to speak voice commands to interact with services through Google Assistant, the company's virtual assistant. Both in-house and third-party services are integrated, allowing users to listen to music, control playback of videos or photos, or receive news updates entirely by voice. Google Nest devices also have integrated support for home automation, letting users control smart home appliances with their voice command.",

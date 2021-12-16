@@ -9,6 +9,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import StaleElementReferenceException, NoAlertPresentException, TimeoutException
 
 import os
+import time
 import json
 import urllib.request # python3 std lib
 import urllib.error
@@ -17,6 +18,7 @@ import socket
 
 # custom library
 import helper
+
 
 
 
@@ -57,11 +59,12 @@ while attempt < MAX_ATTEMPT:
         input_password.send_keys(str_password)
         print("Login password={0}".format(input_password.get_attribute('value')))
 
-        btn_login = helper.click_element("//span[text()='Login']/..")
+        btn_login = helper.click_element("//span[normalize-space()='Login']/..")
 
-        profile = helper.find_element_presence("//div[contains(@class,'asc-profile-info')]/a")
-        shopname = profile.text # not sure why this is needed
-        print("Login success shop name={0}".format(profile.get_attribute('innerHTML')))
+        time.sleep(2)
+
+        profile = helper.find_element_presence("//div[contains(@class,'asc-profile-info')]/a", 10)
+        print("Login success shop name={0}".format(profile.get_attribute('title')))
 
 
 
@@ -74,6 +77,40 @@ while attempt < MAX_ATTEMPT:
         product_name = helper.find_elements_presence("//*[@class='item-detail-name']")
         for p in product_name:
             print("Product name={0}".format(p.text))
+
+
+
+
+        #### add product
+        print("ADD PRODUCT:")
+
+        file_product = open("test_product_lazada.json", "r")
+        json_product = file_product.read()
+        products = json.loads(json_product)
+        file_product.close()
+
+        for p in products:
+            print("p.name={0} p.category={1}".format(p['name'], p['category']))
+
+            driver.get("https://sellercenter.lazada.com.my/product/publish/index")
+            time.sleep(1)
+
+            f_name = p['name']
+            product_name = helper.find_element("//text()[normalize-space()='Product Name']//ancestor::div[contains(@class,'next-form-item')]//input")
+            product_name.send_keys(f_name)
+
+            cat_full = p['category']
+            cat_split = cat_full.split(" > ")
+
+            cat_input = helper.click_element("//input[@id='category-input']")
+            for i,x in enumerate(cat_split):
+                xpath = "(//div[@class='category-list'])[" + str(i+1) + "]//p[normalize-space()='" + x + "']/.."
+                cat_list = helper.click_element(xpath)
+                next_status = helper.find_element("//button[normalize-space()='Confirm']").get_attribute("disabled")
+                if next_status == None:
+                    print("next button status {0}={1}".format(i, next_status))
+                    next_btn = helper.click_element("//button[normalize-space()='Confirm']")
+                    break
 
 
 
