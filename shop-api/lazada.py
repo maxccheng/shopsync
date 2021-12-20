@@ -108,8 +108,9 @@ while attempt < MAX_ATTEMPT:
 
             cat_input = helper.click_element("//input[@id='category-input']")
             for i,x in enumerate(cat_split):
-                xpath = "(//ul[@class='list-wrap'])[" + str(i+1) + "]/li[@title='" + x + "']"
-                cat_list = helper.click_element(xpath)
+                #xpath = "(//ul[@class='list-wrap'])[" + str(i+1) + "]/li[@title='" + x + "']"
+                xpath = "(//form//div[@class='cascade-wrap']/div[@class='category-list']/div[@class='list-frame']/ul[@class='list-wrap'])[" + str(i+1) + "]/li[@title='" + x + "']"
+                cat_list = helper.click_element(xpath, 10)
                 next_status = helper.find_element("//button[text()='Confirm']").get_attribute("disabled")
                 if next_status == None:
                     print("next button status {0}={1}".format(i, next_status))
@@ -162,8 +163,14 @@ while attempt < MAX_ATTEMPT:
         #### logout
         print("LOGOUT:")
         driver.get("https://sellercenter.lazada.com.my")
-        profile_icon = helper.click_element("//div[@class='right-sidebar']//div[contains(@class,'profile-icon')]/img")
-        logout_icon = helper.click_element("//div[@class='profile-portals']//div[contains(@class,'log-out')]")
+
+        modal_overlay = helper.find_elements("//body/div[contains(@class,'next-overlay-wrapper')]")
+        if len(modal_overlay) > 0:
+            helper.click_element("//body/div[contains(@class,'next-overlay-wrapper')]")
+            print("closed modal overlay")
+
+        profile_icon = helper.click_element("//div[@class='main-content']/div[@class='right-sidebar']//div[contains(@class,'profile-icon')]/img")
+        logout_icon = helper.click_element("//div[@class='profile-menu-item log-out']")
 
         print("Logout ok")
         driver.quit()
