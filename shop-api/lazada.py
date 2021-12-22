@@ -73,12 +73,39 @@ while attempt < MAX_ATTEMPT:
 
         #### list products
         print("LIST PRODUCT:")
-        driver.get("https://sellercenter.lazada.com.my/product/portal/index")
-
+        product_list = []
+        driver.get("https://sellercenter.lazada.com.my/apps/product/list?tab=all")
 
         product_name = helper.find_elements_presence("//*[@class='item-detail-name']")
         for p in product_name:
+            product_list.append(p.text)
             print("Product name={0}".format(p.text))
+
+
+
+        #### dump all products info into a json file
+        product_info = []
+
+        #### download single product
+        print("DOWNLOAD SINGLE PRODUCT:")
+
+        for pname in product_list:
+            product = {}
+            driver.get("https://sellercenter.lazada.com.my/apps/product/list?tab=all")
+
+            edit_link = helper.find_element("//*[@class='item-detail-name' and normalize-space()='" + pname + "']//ancestor::tr//a[@data-spm='d_action_edit']")
+            driver.get(edit_link.get_attribute('href'))
+
+            product_name = helper.find_element("//h2[text()='Basic Information']/..//div[@class='next-form-item-label' and normalize-space()='Product Name']/..//input")
+            product['name'] = product_name.get_attribute('value')
+            print("p.name={0}".format(product['name']))
+
+            product_info.append(product)
+
+        json_data = json.dumps(product_info)
+        file_handle = open("test_lazada_download.json", "w")
+        file_handle.write(json_data)
+        file_handle.close()
 
 
 

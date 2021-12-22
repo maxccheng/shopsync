@@ -84,8 +84,8 @@ while attempt < MAX_ATTEMPT:
 
 
 
-        #### download one product
-        print("DL ONE PRODUCT:")
+        #### download single product
+        print("DOWNLOAD SINGLE PRODUCT:")
         driver.get("https://seller.shopee.com.my/portal/product/list/all")
         href_product = helper.find_element("//a[@class='product-name-wrap']")
         driver.get(href_product.get_attribute("href"))
