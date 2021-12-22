@@ -164,10 +164,11 @@ while attempt < MAX_ATTEMPT:
         print("LOGOUT:")
         driver.get("https://sellercenter.lazada.com.my")
 
-        modal_overlay = helper.find_elements("//body/div[contains(@class,'next-overlay-wrapper')]")
-        if len(modal_overlay) > 0:
+        try:
             helper.click_element("//body/div[contains(@class,'next-overlay-wrapper')]")
             print("closed modal overlay")
+        except TimeoutException:
+            pass
 
         profile_icon = helper.click_element("//div[@class='main-content']/div[@class='right-sidebar']//div[contains(@class,'profile-icon')]/img")
         logout_icon = helper.click_element("//div[@class='profile-menu-item log-out']")
@@ -177,8 +178,8 @@ while attempt < MAX_ATTEMPT:
 
     except Exception as e:
         print("Global exception #{0}/{1}:".format(attempt+1, MAX_ATTEMPT))
-        print(traceback.format_exc())
         driver.quit()
+        print(traceback.format_exc())
         attempt += 1
         continue
 
