@@ -83,10 +83,11 @@ while attempt < MAX_ATTEMPT:
 
 
 
+
         #### dump all products info into a json file
         product_info = []
 
-        #### download single product
+        ### download single product
         print("DOWNLOAD SINGLE PRODUCT:")
 
         for pname in product_list:
@@ -96,13 +97,57 @@ while attempt < MAX_ATTEMPT:
             edit_link = helper.find_element("//*[@class='item-detail-name' and normalize-space()='" + pname + "']//ancestor::tr//a[@data-spm='d_action_edit']")
             driver.get(edit_link.get_attribute('href'))
 
+            ## section - Basic Information
             product_name = helper.find_element("//h2[text()='Basic Information']/..//div[@class='next-form-item-label' and normalize-space()='Product Name']/..//input")
             product['name'] = product_name.get_attribute('value')
             print("p.name={0}".format(product['name']))
 
+            product_cat = helper.find_element("//h2[text()='Basic Information']/..//div[@class='next-form-item-label' and normalize-space()='Category']/..//input")
+            str_cat  = product_cat.get_attribute('value')
+            product['category'] = str_cat.replace("/",">")
+            print("p.category={0}".format(product['category']))
+
+            product_video = helper.find_element("//h2[text()='Basic Information']/..//div[@class='next-form-item-label' and normalize-space()='Video URL']/..//input")
+            product['video_url'] = product_video.get_attribute('value')
+            print("p.video_url={0}".format(product['video_url']))
+
+            ## section - Specification
+            product_brand = helper.find_element("//h2[text()='Specification']/..//div[@class='next-form-item-label' and normalize-space()='Brand']/..//span[contains(@class,'next-select-values')]")
+            product['brand'] = product_brand.text
+            print("p.brand={0}".format(product['brand']))
+
+            ## section - Variants
+            product_price = helper.find_element("(//h2[text()='Variants']/..//div[@class='next-table-body']//tr/td)[1]//input")
+            product['price'] = product_price.get_attribute('value')
+            print("p.price={0}".format(product['price']))
+
+            product_quantity = helper.find_element("(//h2[text()='Variants']/..//div[@class='next-table-body']//tr/td)[3]//input")
+            product['quantity'] = product_quantity.get_attribute('value')
+            print("p.quantity={0}".format(product['quantity']))
+
+            ## section - Description skip for now
+
+            ## section - Delivery & Warranty
+            product_weight = helper.find_element("//h2[text()='Delivery & Warranty']/..//div[@class='next-form-item-label' and normalize-space()='Package Weight (kg)']/..//input")
+            product['weight'] = product_weight.get_attribute('value')
+            print("p.weight={0}".format(product['weight']))
+
+            package_w = helper.find_element("(//h2[text()='Delivery & Warranty']/..//div[@class='next-form-item-label' and normalize-space()='Package Dimensions (cm)']/..//input)[2]")
+            product['parcel_size_w'] = package_w.get_attribute('value')
+            print("p.parcel_size_w={0}".format(product['parcel_size_w']))
+
+            package_l = helper.find_element("(//h2[text()='Delivery & Warranty']/..//div[@class='next-form-item-label' and normalize-space()='Package Dimensions (cm)']/..//input)[1]")
+            product['parcel_size_l'] = package_l.get_attribute('value')
+            print("p.parcel_size_l={0}".format(product['parcel_size_l']))
+
+            package_h = helper.find_element("(//h2[text()='Delivery & Warranty']/..//div[@class='next-form-item-label' and normalize-space()='Package Dimensions (cm)']/..//input)[3]")
+            product['parcel_size_h'] = package_h.get_attribute('value')
+            print("p.parcel_size_h={0}".format(product['parcel_size_h']))
+
+
             product_info.append(product)
 
-        json_data = json.dumps(product_info)
+        json_data = json.dumps(product_info, indent=4)
         file_handle = open("test_lazada_download.json", "w")
         file_handle.write(json_data)
         file_handle.close()
@@ -135,9 +180,8 @@ while attempt < MAX_ATTEMPT:
 
             cat_input = helper.click_element("//input[@id='category-input']")
             for i,x in enumerate(cat_split):
-                #xpath = "(//ul[@class='list-wrap'])[" + str(i+1) + "]/li[@title='" + x + "']"
                 xpath = "(//form//div[@class='cascade-wrap']/div[@class='category-list']/div[@class='list-frame']/ul[@class='list-wrap'])[" + str(i+1) + "]/li[@title='" + x + "']"
-                cat_list = helper.click_element(xpath, 10)
+                cat_list = helper.click_element(xpath, 12, 3)
                 next_status = helper.find_element("//button[text()='Confirm']").get_attribute("disabled")
                 if next_status == None:
                     print("next button status {0}={1}".format(i, next_status))
