@@ -35,6 +35,15 @@ chromeOptions.add_argument("--window-size=1920,1080")
 # for urlretrieve() timeout
 socket.setdefaulttimeout(12)
 
+def get_image(element):
+    try:
+        url = element.get_attribute('src')
+        return urllib.request.urlretrieve(url)[0]
+    except urllib.error.URLerror as e:
+        print(e.__dict__)
+    except urllib.error.HTTPerror as e:
+        print(e.__dict__)
+
 MAX_ATTEMPT = 2
 attempt = 0
 while attempt < MAX_ATTEMPT:
@@ -107,6 +116,24 @@ while attempt < MAX_ATTEMPT:
             product['category'] = str_cat.replace("/",">")
             print("p.category={0}".format(product['category']))
 
+
+            # image download, a bit complicated
+            img_edit = helper.find_elements_presence("//button[contains(@class,'image-item-action-item')]/i[contains(@class,'next-icon-edit')]")
+
+            if len(img_edit) > 0:
+                print("image count={0} found".format(len(img_edit)))
+                product['image'] = []
+                for i,b in enumerate(img_edit):
+                    helper.click_element("(//button[contains(@class,'image-item-action-item')]/i[contains(@class,'next-icon-edit')])[" + str(i+1) + "]/..")
+                    img_actual = helper.find_element_presence("//body/div[@class='next-overlay-wrapper opened']//img")
+                    metadata = ()
+                    img_local = get_image(img_actual)
+                    product['image'].append(img_local)
+                    helper.click_element("//body/div[@class='next-overlay-wrapper opened']//a[@class='next-dialog-close']")
+
+                print("p.image={0}".format(product['image']))
+
+
             product_video = helper.find_element("//h2[text()='Basic Information']/..//div[@class='next-form-item-label' and normalize-space()='Video URL']/..//input")
             product['video_url'] = product_video.get_attribute('value')
             print("p.video_url={0}".format(product['video_url']))
@@ -117,30 +144,30 @@ while attempt < MAX_ATTEMPT:
             print("p.brand={0}".format(product['brand']))
 
             ## section - Variants
-            product_price = helper.find_element("(//h2[text()='Variants']/..//div[@class='next-table-body']//tr/td)[1]//input")
+            product_price = helper.find_element_presence("(//h2[text()='Variants']/..//div[@class='next-table-body']//tr/td)[1]//input")
             product['price'] = product_price.get_attribute('value')
             print("p.price={0}".format(product['price']))
 
-            product_quantity = helper.find_element("(//h2[text()='Variants']/..//div[@class='next-table-body']//tr/td)[3]//input")
+            product_quantity = helper.find_element_presence("(//h2[text()='Variants']/..//div[@class='next-table-body']//tr/td)[3]//input")
             product['quantity'] = product_quantity.get_attribute('value')
             print("p.quantity={0}".format(product['quantity']))
 
             ## section - Description skip for now
 
             ## section - Delivery & Warranty
-            product_weight = helper.find_element("//h2[text()='Delivery & Warranty']/..//div[@class='next-form-item-label' and normalize-space()='Package Weight (kg)']/..//input")
+            product_weight = helper.find_element_presence("//h2[text()='Delivery & Warranty']/..//div[@class='next-form-item-label' and normalize-space()='Package Weight (kg)']/..//input")
             product['weight'] = product_weight.get_attribute('value')
             print("p.weight={0}".format(product['weight']))
 
-            package_w = helper.find_element("(//h2[text()='Delivery & Warranty']/..//div[@class='next-form-item-label' and normalize-space()='Package Dimensions (cm)']/..//input)[2]")
+            package_w = helper.find_element_presence("(//h2[text()='Delivery & Warranty']/..//div[@class='next-form-item-label' and normalize-space()='Package Dimensions (cm)']/..//input)[2]")
             product['parcel_size_w'] = package_w.get_attribute('value')
             print("p.parcel_size_w={0}".format(product['parcel_size_w']))
 
-            package_l = helper.find_element("(//h2[text()='Delivery & Warranty']/..//div[@class='next-form-item-label' and normalize-space()='Package Dimensions (cm)']/..//input)[1]")
+            package_l = helper.find_element_presence("(//h2[text()='Delivery & Warranty']/..//div[@class='next-form-item-label' and normalize-space()='Package Dimensions (cm)']/..//input)[1]")
             product['parcel_size_l'] = package_l.get_attribute('value')
             print("p.parcel_size_l={0}".format(product['parcel_size_l']))
 
-            package_h = helper.find_element("(//h2[text()='Delivery & Warranty']/..//div[@class='next-form-item-label' and normalize-space()='Package Dimensions (cm)']/..//input)[3]")
+            package_h = helper.find_element_presence("(//h2[text()='Delivery & Warranty']/..//div[@class='next-form-item-label' and normalize-space()='Package Dimensions (cm)']/..//input)[3]")
             product['parcel_size_h'] = package_h.get_attribute('value')
             print("p.parcel_size_h={0}".format(product['parcel_size_h']))
 
