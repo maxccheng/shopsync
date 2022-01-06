@@ -193,6 +193,21 @@ while attempt < MAX_ATTEMPT:
         for p in products:
             print("p.name={0} p.category={1}".format(p['name'], p['category']))
 
+            # upload images separately in media center
+            driver.get("https://sellercenter.lazada.com.my/apps/mediacenter")
+            time.sleep(1)
+
+            print("start upload={0}".format(p['image']))
+            helper.click_element("//button[text()='Upload Image']")
+
+            for f in p['image']:
+                input_img = helper.find_element_presence("//body/div[@class='material-center-overlay-wrapper opened']/div[@role='dialog']//input", 12)
+                input_img.send_keys(os.path.abspath(f))
+
+            helper.click_element("//button/span[text()='Confirm upload']/../../button[@disabled='']", 15, 6)
+            print("uploaded image")
+
+            # actual product information fill up
             driver.get("https://sellercenter.lazada.com.my/product/publish/index")
             time.sleep(1)
 
@@ -216,6 +231,12 @@ while attempt < MAX_ATTEMPT:
                     break
 
             time.sleep(3)
+
+            helper.click_element("//h2[text()='Basic Information']/..//button[text()='Media Center']")
+            for f in p['image']:
+                helper.click_element("//body/div[@class='next-overlay-wrapper opened']//div[@class='mc-selectable dada-image-table']/*/div[@class='dada-image-table__content']/div/div[@class='material-center__img-name' and @title='" + f  + "']/../../..")
+            helper.click_element("//body/div[@class='next-overlay-wrapper opened']//button[text()='Submit']")
+            print("Selected image from media center")
 
             # fill section - specification
             f_brand = p['brand']
